@@ -4,48 +4,55 @@
  * DESCRIPTION :
  *       WS2812 / Intelligent control LED integrated light source Library Testing.
  *		 required : WS2812 library for MBED OS 6
+ *		 required : PixelArray library for MBED OS 6
  *
  * NOTES :
  *       Developped by Villou / LEnsE
  **
- * AUTHOR :    Julien VILLEMEJANE        START DATE :    07/feb/2023
+ * AUTHOR :    Julien VILLEMEJANE        START DATE :    25/oct/2023
  *
  *       LEnsE / Institut d'Optique Graduate School
  */
-
 #include "mbed.h"
 #include "WS2812.h"
-#define     LED_STRIP_NB        6
+#include "PixelArray.h"
 
-#define WAIT_TIME_MS 500 
-DigitalOut led1(LED1);
+#define     STRIP_SIZE      10
 
-/// Create a digital output for WS2812 RGB Led
-DigitalOut smart_led(D9);
-/// Create a WS2812 module - Timing is for L476RG Nucleo Board
-WS2812 ws(&smart_led, LED_STRIP_NB, 0, 5, 5, 0);
+WS2812  my_strip(D10, STRIP_SIZE);
+PixelArray my_leds(STRIP_SIZE, 24);
+int colors[STRIP_SIZE];
 
+// Main function
+int main() {
+    my_strip.set_timings(6, 13, 14, 5);
 
-int main()
-{
-    int k = 0;
-    int gb = 100;
-    ws.SetAll(0);       // Clear All
-    ws.SetAllB(200);                // Init in Blue
-    ws.write();                     // Send Data to strip
-    thread_sleep_for(500);         // ... wait 0.5s
+    my_strip.break_trame();
+    my_strip.send_leds(my_leds.get_array()); 
 
-    while (true)
-    {
-        k++;
-        led1 = !led1;
-        ws.SetAll(0);       // Clear All
-        if(k%2 == 0)        // 1 time on 2...
-            ws.SetAllR(200);    // Led in Blue
-        else
-            ws.SetAllB(150);    // Led in Green
-        ws.write();
-        /// Every 0.5s
-        thread_sleep_for(WAIT_TIME_MS);
+    int cpt = 0;
+
+    while(1){
+        my_strip.break_trame();
+        wait_us(200000);
+        my_leds.set_all_RGB(255, 0, 128);
+        my_strip.send_leds(my_leds.get_array());
+
+        my_strip.break_trame();
+        wait_us(200000);  
+        my_leds.set_black_all();
+        my_strip.send_leds(my_leds.get_array());
+
+        my_strip.break_trame();
+        wait_us(200000);  
+        my_leds.set_pix_RGB(cpt%STRIP_SIZE, 0, 255, 0);
+        my_strip.send_leds(my_leds.get_array());
+
+        my_strip.break_trame();
+        wait_us(200000);  
+        my_leds.set_black_all();
+        my_strip.send_leds(my_leds.get_array());
+        
+        cpt+=1;
     }
 }
