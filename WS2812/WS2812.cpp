@@ -5,11 +5,12 @@
     T1H = 0.8us / T1L = 0.45us
 */
 
-WS2812::WS2812(PinName pin_strip, int nb_leds):
+WS2812::WS2812(PinName pin_strip, int nb_leds, int nb_bits):
 __ws_led(pin_strip)
 {
     this->__ws_led = 0;
     this->__nb_leds = nb_leds;
+    this->__nb_bits = nb_bits;
 }
 
 void WS2812::send_led_one(){
@@ -39,8 +40,8 @@ void WS2812::break_trame(){
 }
 
 void WS2812::send_led_trame(int cl){
-    for(int k = 0; k < TYPE; k++){
-        int bin = cl >> (TYPE-1-k);
+    for(int k = 0; k < this->__nb_bits; k++){
+        int bin = cl >> (this->__nb_bits-1-k);
         if((bin & 0x1) == 1){
             this->send_led_one();
         }else{
@@ -51,6 +52,9 @@ void WS2812::send_led_trame(int cl){
 
 void WS2812::send_leds(int *leds){
     __disable_irq();
+    if(this->__nb_bits == 32){
+        
+    }
     for(int k = 0; k < this->__nb_leds; k++){
         this->send_led_trame(leds[k]);
     }

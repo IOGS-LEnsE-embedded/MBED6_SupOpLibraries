@@ -14,9 +14,6 @@
 
 #include "mbed.h"
 
-#define WS2812_BUF  5
-#define TYPE        24
-
 /* Timing Values */
 /* For L476RG :
     T0H = 6, T0L = 13, T1H = 14, T1L = 5
@@ -36,8 +33,9 @@ class WS2812{
         * @details Create a WS2812 LEDs Strip controller
         * @param pin_strip Output pin to control the LEDs strip 
         * @param nb_leds Number of LEDs of the strip
+        * @param nb_bits Number of bits per LEDs - 24 or 32
         */
-        WS2812(PinName pin_strip, int nb_leds);
+        WS2812(PinName pin_strip, int nb_leds, int nb_bits=24);
 
         /* Setup the timings values */
         void set_timings(int t0h, int t0l, int t1h, int t1l);
@@ -59,6 +57,8 @@ class WS2812{
         DigitalOut  __ws_led;
         /* Number of LEDs on the strip */
         int         __nb_leds;
+        /* Number of bits per LEDs - 24 or 32 */
+        int         __nb_bits;
         /* Timing for high and low level values */
         int t0h = 0;
         int t0l = 0;

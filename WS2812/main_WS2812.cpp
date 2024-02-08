@@ -19,8 +19,8 @@
 
 #define     STRIP_SIZE      10
 
-WS2812  my_strip(D10, STRIP_SIZE);
-PixelArray my_leds(STRIP_SIZE, 24);
+WS2812  my_strip(D10, STRIP_SIZE, WS2812_WHI);
+PixelArray my_leds(STRIP_SIZE, 32);
 int colors[STRIP_SIZE];
 
 // Main function

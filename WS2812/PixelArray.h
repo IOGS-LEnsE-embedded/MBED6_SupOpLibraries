@@ -12,6 +12,9 @@
 #ifndef     __PIXEL_ARRAY_H_HEADER_H__
 #define     __PIXEL_ARRAY_H_HEADER_H__
 
+#define     WS2812_STD      24
+#define     WS2812_WHI      32
+
 
 class PixelArray{
     public:
