@@ -52,6 +52,9 @@ void WS2812::send_led_trame(int cl){
 
 void WS2812::send_leds(int *leds){
     __disable_irq();
+    if(this->__nb_bits == 32){
+        
+    }
     for(int k = 0; k < this->__nb_leds; k++){
         this->send_led_trame(leds[k]);
     }
