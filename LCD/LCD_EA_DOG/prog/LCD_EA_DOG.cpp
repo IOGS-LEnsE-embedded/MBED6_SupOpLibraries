@@ -44,7 +44,7 @@ void LCD_EA_DOG::initLCD(void){
     this->__spi->write(0x1D);   // Bias Set
     this->__spi->write(0x50);   // Power Control
     this->__spi->write(0x6C);   // Follower Control
-    this->__spi->write(0x7C);   // Contrast Set
+    this->__spi->write(0x78);   // Contrast Set
     this->__spi->write(0x03);   // Function Set - table 0
     this->__spi->write(0x0F);   
     this->__spi->write(0x01);   // Clear Display
@@ -59,6 +59,39 @@ void LCD_EA_DOG::initLCD(void){
     writeLCD('_');
     */
     return;
+}
+
+
+void LCD_EA_DOG::display_off(void){
+    this->__rs.write(0);
+    this->__cs.write(0);
+    this->__spi->write(0x08);  // Display Off
+    thread_sleep_for(2);       // 10 ms
+    this->__rs.write(1);
+    this->__cs.write(1);
+}
+
+void LCD_EA_DOG::display_on(void){
+    this->__rs.write(0);
+    this->__cs.write(0);
+    this->__spi->write(0x0F);  // Display On
+    thread_sleep_for(2);       // 10 ms
+    this->__rs.write(1);
+    this->__cs.write(1);
+}
+
+bool LCD_EA_DOG::set_contrast(uint8_t val){
+    if((val < 0) || (val > 7)){
+        return false;
+    }
+    uint8_t contrast = 0x78 + val;
+    this->__rs.write(0);
+    this->__cs.write(0);
+    this->__spi->write(contrast);   // Contrast Set
+    thread_sleep_for(2);       // 10 ms
+    this->__rs.write(1);
+    this->__cs.write(1);
+    return true;
 }
  
 /****************************************************************/

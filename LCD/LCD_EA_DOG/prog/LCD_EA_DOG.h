@@ -72,6 +72,23 @@ class LCD_EA_DOG{
         void    clearLCD(void);
 
         /**
+        * @brief Switch off the screen.
+        */
+        void    display_off(void);
+
+        /**
+        * @brief Switch on the screen.
+        */
+        void    display_on(void);
+
+        /**
+        * @brief Change the contrast of the screen.
+        * @param val Value of the contrast, between 0 to 7.
+        * @return true if the value of contrast is in the good range.
+        */ 
+        bool    set_contrast(uint8_t val);
+
+        /**
         * @brief Write a char on the LCD screen at the next position.
         * @param c Character to display.
         */        

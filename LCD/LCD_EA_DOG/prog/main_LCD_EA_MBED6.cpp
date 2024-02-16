@@ -46,6 +46,21 @@ int main()
         sprintf(str_to_write, "Test k = %d", k);
         my_lcd.writeStrLCD(str_to_write, 2, 1);
         thread_sleep_for(500);
+        if(k % 4 == 0){
+            my_lcd.display_on();
+            my_lcd.set_contrast(7);
+        } 
+        if(k % 4 == 1){
+            my_lcd.display_on();
+            my_lcd.set_contrast(4);
+        }
+        if(k % 4 == 2){
+            my_lcd.display_off();
+        }
+        if(k % 4 == 3){
+            my_lcd.display_on();
+            my_lcd.set_contrast(0);
+        }        
     }
 }
 
