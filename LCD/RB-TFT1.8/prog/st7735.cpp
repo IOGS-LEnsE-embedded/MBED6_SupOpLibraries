@@ -32,6 +32,8 @@ ST7735::ST7735(SPI *spi, PinName cs, PinName rs_dc, PinName reset):
 	this->__spi->frequency(ST7735_SPI_FREQ);
     this->__spi->format(8, 0);
 	wait_us(1000);
+	/// Background color
+	this->__bg_color = ST7735_BLACK;
 }
 
 
@@ -99,13 +101,16 @@ void	ST7735::init(void){
 	// Main screen turn on
 	this->send_command(DISPON);
 	wait_us(200000);	// 200 ms
+	// Clear screen
+	this->clear_screen(this->__bg_color);
 }
 
 void ST7735::clear_screen(uint16_t color)
 {
+	this->__bg_color = color;
 	this->set_window(0, SIZE_X, 0, SIZE_Y);
 	// draw individual pixels
-	this->set_color(color, CACHE_SIZE_MEM);
+	this->set_color(this->__bg_color, CACHE_SIZE_MEM);
 }
 
 
@@ -179,13 +184,13 @@ void 	ST7735::send_data_16bits (uint16_t data)
  **************************************************************/
 
 
-bool 	ST7735::set_window(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1){
+bool 	ST7735::set_window(uint16_t x0, uint16_t x1, uint16_t y0, uint16_t y1){
 	// check if coordinates is out of range
-	if ((x0 > x1)     ||	(x1 > SIZE_X) ||
-		(y0 > y1)     ||      (y1 > SIZE_Y)) { 
-		// out of range
-		return ST7735_ERROR;
-	}  
+	if ((x0 > x1)     ||	(y0 > y1)){ return ST7735_ERROR; }  
+    // check if coordinates is out of range
+    if (!this->check_range(x0, y0)) { return ST7735_ERROR; } 
+    // check if coordinates is out of range
+    if (!this->check_range(x1, y1)) { return ST7735_ERROR; } 
 	// column address set
 	this->send_command(CASET);
 	// send start x position
@@ -205,14 +210,15 @@ bool 	ST7735::set_window(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1){
 }
 
 
-bool    ST7735::set_position (uint8_t x, uint8_t y)
+void 	ST7735::set_screen_size(uint16_t width, uint16_t height){
+	this->__width = width;
+	this->__height = height;
+}
+
+bool    ST7735::set_position (uint16_t x, uint16_t y)
 {
     // check if coordinates is out of range
-    if ((x > MAX_X) || (y > MAX_Y)) {
-        // error
-        return ST7735_ERROR;
-
-    } 
+    if (!this->check_range(x, y)) { return ST7735_ERROR; } 
     // set position x 
     this->__text_x = x;
     // set position y 
@@ -221,7 +227,25 @@ bool    ST7735::set_position (uint8_t x, uint8_t y)
     return ST7735_SUCCESS;
 }
 
+bool    ST7735::check_range(uint16_t x, uint16_t y)
+{
+	// check if coordinates is out of range
+	if ((x > this->__width)  ||	(x < 0) ||
+		(y > this->__height)  ||	(y < 0)){
+		// out of range
+		return ST7735_ERROR;
+	}
+	// success
+	return ST7735_SUCCESS;
+}
 
+bool    ST7735::check_value_range(uint16_t val, uint16_t min, uint16_t max)
+{
+	// check if coordinates is out of range
+	if ((val > max)  ||	(val < min)){	return ST7735_ERROR; }
+	// success
+	return ST7735_SUCCESS;
+}
 
 /**************************************************************
  *	Drawings
@@ -263,17 +287,17 @@ bool 	ST7735::draw_char(char character, uint16_t color, enum Size size)
 	// last row of character array - 8 rows / bits
 	idxRow = CHARS_ROWS_LEN;
 
-	// --------------------------------------
-	// SIZE X1 - normal font 1x high, 1x wide
-	// --------------------------------------
-	if (size == X1) {  
+	// ------------------------
+	// SIZE X1 - normal font 1x
+	// ------------------------
+	if (size == NORMAL) {  
 		// loop through 5 bits
 		while (idxCol--) {
 			// read from ROM memory 
 			letter = FONTS[character - 0x20][idxCol];
 			// loop through 8 bits
 			while (idxRow--) {
-			// check if bit set
+				// check if bit set
 				if (letter & (1 << idxRow)) {
 					// draw pixel 
 					this->draw_pixel(this->__text_x + idxCol, this->__text_y + idxRow, color);
@@ -345,5 +369,31 @@ bool 	ST7735::draw_char(char character, uint16_t color, enum Size size)
 
 	// return exit
 	return ST7735_SUCCESS;
+}
+
+
+bool 	ST7735::draw_string(char *str, uint16_t color, enum Size size)
+{
+	// variables
+	unsigned int i = 0;
+	bool check;
+	unsigned char delta_y;
+	uint16_t max_x_pos;
+	uint16_t max_y_pos;
+	unsigned char new_x_pos;
+	unsigned char new_y_pos;
+	
+	// Check if string size is in the range of the screen
+	max_x_pos = this->__text_x + ((CHARS_COLS_LEN+1) * size);
+	max_y_pos = this->__text_y + (CHARS_ROWS_LEN * size);
+	// check if coordinates is out of range
+    if (!this->check_range(max_x_pos, max_y_pos)) { return ST7735_ERROR; }
+
+	// loop through character of string
+	while (str[i] != '\0') {
+		// read characters and increment index
+		this->draw_char(str[i++], color, size);
+	}
+    return ST7735_SUCCESS;
 }
 

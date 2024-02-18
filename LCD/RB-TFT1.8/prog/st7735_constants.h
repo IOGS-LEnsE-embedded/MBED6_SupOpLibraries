@@ -97,14 +97,13 @@
 
   /** @enum Font sizes */
   enum Size {
-    // 1x high & 1x wide size
-    X1 = 0x00,
-    // 2x high & 1x wide size
-    X2 = 0x80,
-    // 2x high & 2x wider size
-    // 0x0A is set because need to offset 5 position to right
-    //      when draw the characters of string 
-    X3 = 0x81
+    // 1x 
+    NORMAL = 1,
+    // 2x 
+    LARGE = 2,
+    // 4x 
+    HUGE = 4
+	
   };
 
 #endif

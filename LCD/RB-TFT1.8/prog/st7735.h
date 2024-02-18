@@ -21,12 +21,11 @@
 
 #include "mbed.h"
 #include "st7735_constants.h"
-#include <cstdint>
 
 /**
  * @class ST7735
- * @brief Class to control a LCD display driven by a ST7735 device
- * @details     ST7735 is a 262K Color Single-Chip TFT Controller/Driver
+ * @brief 	Class to control a LCD display driven by a ST7735 device
+ * @details ST7735 is a 262K Color Single-Chip TFT Controller/Driver
  */
 
 class ST7735 {
@@ -48,6 +47,9 @@ class ST7735 {
         uint16_t        __text_x;
         uint16_t        __text_y;
 		
+		/// Background color
+		uint16_t		__bg_color;
+		
         /**
         * @brief Send a command of 8 bits to the driver.
         * @param cmd uint8_t - Command to send, 1 byte.
@@ -65,6 +67,23 @@ class ST7735 {
         * @param data uint16_t - Data to send, 2 bytes.
 		*/				
 		void 	send_data_16bits (uint16_t data);
+		
+		/**
+        * @brief Check if the coordinates are in the range of the screen size
+		* @param x  uint16_t - coordinate on X axis
+		* @param y 	uint16_t - coordinate on Y axis
+		* @return true if is in the range of the screen size
+		*/			
+		bool    check_range(uint16_t x, uint16_t y);
+
+		/**
+        * @brief Check if the value is in the range
+		* @param val  uint16_t - value to test
+		* @param min  uint16_t - minimum value of the range
+		* @param max  uint16_t - maximum value of the range
+		* @return true if is in the range 
+		*/			
+		bool    check_value_range(uint16_t val, uint16_t min, uint16_t max);
 		
 
     public:
@@ -104,48 +123,65 @@ class ST7735 {
 		*/		
 		void 	clear_screen(uint16_t color);
 		
+		/**
+        * @brief Set the screen size in pixels
+		* @param width  uint16_t - width of the screen in pixels
+		* @param height uint16_t - height of the screen in pixels
+		*/		
+		void 	set_screen_size(uint16_t width, uint16_t height);
 		
 		/**
 		 * @brief    Set position of the window
-		 * @param x0  uint8_t - start position on X axis
-		 * @param x1  uint8_t - end position on X axis
-		 * @param y0  uint8_t - start position on Y axis
-		 * @param y1  uint8_t - end position on Y axis
+		 * @param x0  uint16_t - start position on X axis
+		 * @param x1  uint16_t - end position on X axis
+		 * @param y0  uint16_t - start position on Y axis
+		 * @param y1  uint16_t - end position on Y axis
 		 * @return false if the positions are out of range of the screen
 		 */
-		bool 	set_window(uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1);
+		bool 	set_window(uint16_t x0, uint16_t x1, uint16_t y0, uint16_t y1);
 
         /**
         * @brief   Set text position x, y
-        * @param x  uint8_t - position on X axis
-        * @param y  uint8_t - position on Y axis
+        * @param x - uint16_t - position on X axis
+        * @param y - uint16_t - position on Y axis
         * @return  false if x and y are out of range
         */
-        bool    set_position (uint8_t x, uint8_t y);
+        bool    set_position (uint16_t x, uint16_t y);
 
 		/**
 		 * @brief   Set the color of the pixel
-		 * @param color 	uint16_t - Color in 16 bits mode
-		 * @param nb_pixels	uint16_t - Number of pixels to change
+		 * @param color - uint16_t - Color in 16 bits mode
+		 * @param nb_pixels - uint16_t - Number of pixels to change
 		 */
 		void 	set_color(uint16_t color, uint16_t nb_pixels);
 		
 		/**
 		 * @brief    Draw a pixel at a specific position
-		 * @param x  uint8_t - x position / 0 <= cols <= MAX_X-1
-		 * @param y  uint8_t - y position / 0 <= rows <= MAX_Y-1
-		 * @param color 	uint16_t - Color in 16 bits mode
+		 * @param x - uint8_t - x position / 0 <= cols <= MAX_X-1
+		 * @param y - uint8_t - y position / 0 <= rows <= MAX_Y-1
+		 * @param color - uint16_t - Color in 16 bits mode
 		 */
 		void 	draw_pixel (uint16_t x, uint16_t y, uint16_t color);
 			   
 		/**
 		 * @brief   Draw a character on the screen
-		 * @param character char - character to draw
-		 * @param color  uint16_t - Color of the character
-		 * @param size - enum Size - (X1, X2, X3)
+		 * @param character - char - character to draw
+		 * @param color - uint16_t - Color of the character
+		 * @param size - enum Size - (NORMAL, LARGE, HUGE)
 		 * @return false if character is not in the possible table of characters
 		 */
 		bool 	draw_char(char character, uint16_t color, enum Size size);
+			
+		/**
+		 * @brief    Draw a string of characters
+		 * @param str - char * - String to display
+		 * @param color - uint16_t - Color of the string
+		 * @param size - enum Size - (NORMAL, LARGE, HUGE)
+		 *
+		 * @return  false if the string of characters is too large for the screen
+		 */
+		bool 	draw_string(char *str, uint16_t color, enum Size size);
+		
 };
 
 #endif

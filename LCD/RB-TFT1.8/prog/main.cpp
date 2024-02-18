@@ -52,15 +52,19 @@ int main()
     // Initialization 
     printf("RB-TFT1.8 / LCD Screen / Initialization\r\n");
 	my_lcd.init();
+    my_lcd.set_screen_size(MAX_X, MAX_Y);
 	my_lcd.clear_screen(ST7735_BLACK);
-	my_lcd.draw_pixel(20, 20, ST7735_RED);
     for(int i = 0; i < 10; i++){
         my_lcd.draw_pixel(30+i, 30+i, ST7735_RED);
     }
-    my_lcd.set_position(50, 50);
-	my_lcd.draw_char('a', ST7735_BLUE, X1);
+    my_lcd.set_position(10, 50);
+	my_lcd.draw_char('a', ST7735_BLUE, NORMAL);
     my_lcd.set_position(80, 100);
-	my_lcd.draw_char('V', ST7735_GREEN, X1);
+	my_lcd.draw_char('V', ST7735_GREEN, NORMAL);
+
+    if(my_lcd.set_position(10, 10)){
+        my_lcd.draw_string("Test LCD", ST7735_GREEN, NORMAL);
+    }
 
     printf("\tEND Initialization\r\n");
     // Initialization of interrupt on falling edge of the push button
@@ -71,6 +75,7 @@ int main()
     
     while (true){
 		if(cpt % 20 == 0){
+            // BackLight can not be disable on the Joy-IT RB-TFT1.8
 			my_lcd.display_off();
 		}
 		if(cpt % 20 == 10){
