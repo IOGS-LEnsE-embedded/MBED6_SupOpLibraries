@@ -157,11 +157,23 @@ class ST7735 {
 		
 		/**
 		 * @brief    Draw a pixel at a specific position
-		 * @param x - uint8_t - x position / 0 <= cols <= MAX_X-1
-		 * @param y - uint8_t - y position / 0 <= rows <= MAX_Y-1
+		 * @param x - uint16_t - x position / 0 <= cols <= MAX_X-1
+		 * @param y - uint16_t - y position / 0 <= rows <= MAX_Y-1
 		 * @param color - uint16_t - Color in 16 bits mode
+         * @return  false if x and y are out of range
 		 */
-		void 	draw_pixel (uint16_t x, uint16_t y, uint16_t color);
+		bool	draw_pixel (uint16_t x, uint16_t y, uint16_t color);
+
+		/**
+		 * @brief    Draw a line using Bresenham's Algorithm
+		 * @param x0 - uint16_t - x0 position of the first point of the line
+		 * @param y0 - uint16_t - y0 position of the first point of the line
+		 * @param x1 - uint16_t - x1 position of the first point of the line
+		 * @param y1 - uint16_t - y1 position of the first point of the line
+		 * @param color - uint16_t - Color in 16 bits mode
+         * @return  false if x0,y0 and x1,y1 are out of range
+		 */		
+		bool 	draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 			   
 		/**
 		 * @brief   Draw a character on the screen

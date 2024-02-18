@@ -19,6 +19,7 @@
 
 #include "font.h"
 #include "st7735.h"
+#include <cstdint>
 
 
 ST7735::ST7735(SPI *spi, PinName cs, PinName rs_dc, PinName reset):
@@ -262,13 +263,56 @@ void 	ST7735::set_color(uint16_t color, uint16_t nb_pixels)
 	}
 }
 
-void 	ST7735::draw_pixel (uint16_t x, uint16_t y, uint16_t color)
+bool 	ST7735::draw_pixel (uint16_t x, uint16_t y, uint16_t color)
 {
+    // check if coordinates is out of range
+    if (!this->check_range(x, y)) { return ST7735_ERROR; }
 	// set window
 	this->set_window(x, x, y, y);
 	// draw pixel by 565 mode
 	this->set_color(color, 1);
+	return ST7735_SUCCESS;
 }
+
+bool 	ST7735::draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)  
+{  
+    // check if coordinates is out of range
+    if (!this->check_range(x0, y0)) { return ST7735_ERROR; }
+    if (!this->check_range(x1, y1)) { return ST7735_ERROR; }
+
+	// Bresenham's Algorithm
+	// @see : https://www.baeldung.com/cs/bresenhams-line-algorithm
+
+    /*
+    # Assumptions : 
+        # 1) Line is drawn from left to right. 
+        # 2) x1 < x2 and y1 < y2 
+        # 3) Slope of the line is between 0 and 1. 
+        # We draw a line from lower left to upper right. 
+    */
+
+    int16_t m_new, slope_error_new, x, y;
+
+    m_new = 2 * (y1 - y0);
+    slope_error_new = m_new - (x1 - x0);
+
+    y = y0;
+
+    for(x = x0; x < x1 + 1; x++){
+        this->draw_pixel(x, y, color);
+        // Add slope to increment angle formed
+        slope_error_new = slope_error_new + m_new;
+
+        // Slope error reached limit, time to increment y 
+        // and update slope error. 
+        if (slope_error_new >= 0){ 
+            y = y+1;
+            slope_error_new = slope_error_new - 2 * (x1 - x0);
+        }
+    }
+
+	return	ST7735_SUCCESS;
+} 
 
 
 bool 	ST7735::draw_char(char character, uint16_t color, enum Size size)

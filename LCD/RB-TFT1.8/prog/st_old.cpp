@@ -1,73 +1,29 @@
 
 
-/**
- * @desc    Check text position x, y
- *
- * @param   unsigned char x - position
- * @param   unsigned char y - position
- * @param   unsigned char
- *
- * @return  char
- */
-char ST7735_CheckPosition (unsigned char x, unsigned char y, unsigned char max_y, enum Size size)
-{
-  // check if coordinates is out of range
-  if ((x > MAX_X) && (y > max_y)) {
-    // out of range
-    return ST7735_ERROR;
+void drawline(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)  
+{  
+    uint16_t dx, dy, p, x, y;  
+    dx=x1-x0;  
+    dy=y1-y0;  
+    x=x0;  
+    y=y0;  
+    p=2*dy-dx;  
+    while(x<x1)  
+    {  
+        if(p>=0)  
+        {  
+            this->draw_pixel(x, y, color);  
+            y=y+1;  
+            p=p+2*dy-2*dx;  
+        }  
+        else  
+        {  
+            this->draw_pixel(x, y, color);  
+            p=p+2*dy;}  
+            x=x+1;  
+        }  
+}  
 
-  }
-  // if next line
-  if ((x > MAX_X) && (y <= max_y)) {
-    // set position y
-    cacheMemIndexRow = y;
-    // set position x
-    cacheMemIndexCol = 2;
-  } 
-
-  // success
-  return ST7735_SUCCESS;
-}
-
-/**
- * @desc    Draw string
- *
- * @param   struct st7735 *
- * @param   char * string 
- * @param   uint16_t color
- * @param   enum Size (X1, X2, X3)
- *
- * @return  void
- */
-void ST7735_DrawString (struct st7735 * lcd, char *str, uint16_t color, enum Size size)
-{
-  // variables
-  unsigned int i = 0;
-  unsigned char check;
-  unsigned char delta_y;
-  unsigned char max_y_pos;
-  unsigned char new_x_pos;
-  unsigned char new_y_pos;
-
-  // loop through character of string
-  while (str[i] != '\0') {
-    // max x position character
-    new_x_pos = cacheMemIndexCol + CHARS_COLS_LEN + (size & 0x0F);
-    // delta y
-    delta_y = CHARS_ROWS_LEN + (size >> 4);
-    // max y position character
-    new_y_pos = cacheMemIndexRow + delta_y;
-    // max y pos
-    max_y_pos = MAX_Y - delta_y;
-    // control if will be in range
-    check = ST7735_CheckPosition (new_x_pos, new_y_pos, max_y_pos, size);
-    // update position
-    if (ST7735_SUCCESS == check) {
-      // read characters and increment index
-      ST7735_DrawChar (lcd, str[i++], color, size);
-    }
-  }
-}
 
 /**
  * @desc    Draw line by Bresenham algoritm
