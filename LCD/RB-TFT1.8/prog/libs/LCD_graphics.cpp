@@ -197,25 +197,31 @@ bool 	LCD_graphics::draw_string(char *str, uint16_t color, enum Size size)
     return LCD_SUCCESS;
 }
 
-
-
-
-/*
-void Adafruit_GFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+bool    LCD_graphics::draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
-    // stupidest version - update in subclasses if desired!
-    for (int16_t i=x; i<x+w; i++)
-        drawFastVLine(i, y, h, color); 
-}
-#endif
+    // check if coordinates is out of range
+    if (!this->check_range(x, y)) { return  LCD_ERROR; } 
+    // check if coordinates is out of range
+    if (!this->check_range(x+w, y+h)) { return  LCD_ERROR; } 
+    this->draw_line(x, y, x+w, y, color);
+    this->draw_line(x, y+h, x+w, y+h, color);
 
-#if defined(GFX_WANT_ABSTRACTS)
-// draw a rectangle
-void Adafruit_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
-{
-    drawFastHLine(x, y, w, color);
-    drawFastHLine(x, y+h-1, w, color);
-    drawFastVLine(x, y, h, color);
-    drawFastVLine(x+w-1, y, h, color);
+    this->draw_line(x, y, x, y+h, color);
+    this->draw_line(x+w, y, x+w, y+h, color);
+
+    return LCD_SUCCESS;
 }
-*/
+
+
+bool    LCD_graphics::fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+{
+    // check if coordinates is out of range
+    if (!this->check_range(x, y)) { return  LCD_ERROR; } 
+    // check if coordinates is out of range
+    if (!this->check_range(x+w, y+h)) { return  LCD_ERROR; } 
+    for(uint16_t k = x; k < x+w; k++){
+        this->draw_line(k, y, k, y+h, color);
+    }
+
+    return LCD_SUCCESS;
+}

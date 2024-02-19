@@ -68,6 +68,9 @@ int main()
     my_lcd.draw_line(30, 50, 100, 40, ST7735_DONT_KNOW);
     my_lcd.draw_line(30, 50, 20, 60, ST7735_BLUE);
 
+    my_lcd.draw_rect(50, 50, 20, 30, ST7735_GREEN);
+    my_lcd.fill_rect(55, 55, 10, 20, ST7735_BLUE);
+
     // Initialization of interrupt on falling edge of the push button
     mode_change.fall(&ISR_change_mode);
 

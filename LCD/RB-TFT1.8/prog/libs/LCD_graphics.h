@@ -70,7 +70,7 @@ class LCD_graphics {
 		 * @return true if is in the range of the screen size
 		 */		
         bool    set_position(uint16_t x, uint16_t y);
-        
+
 		/**
 		 * @brief    Draw a line using Bresenham's Algorithm
 		 * @param x0 - uint16_t - x0 position of the first point of the line
@@ -81,7 +81,30 @@ class LCD_graphics {
          * @return  false if x0,y0 and x1,y1 are out of range
 		 */		
 		bool 	draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
-		
+        
+        /**
+		 * @brief    Draw a rectangle using its top-left corner and its dimension
+		 * @param x - uint16_t - x position of the top-left corner of the rectangle
+		 * @param y - uint16_t - y position of the top-left corner of the rectangle
+		 * @param w - uint16_t - width of the rectangle
+		 * @param h - uint16_t - height of the rectangle
+		 * @param color - uint16_t - Color in 16 bits mode
+         * @return  false if x, y, x+w and y+h are out of range
+		 */	
+        bool    draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+
+        /**
+		 * @brief    Draw a filled rectangle using its top-left corner and its dimension
+		 * @param x - uint16_t - x position of the top-left corner of the rectangle
+		 * @param y - uint16_t - y position of the top-left corner of the rectangle
+		 * @param w - uint16_t - width of the rectangle
+		 * @param h - uint16_t - height of the rectangle
+		 * @param color - uint16_t - Color in 16 bits mode
+         * @return  false if x, y, x+w and y+h are out of range
+		 */	
+        bool    fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+
+
         /**
 		 * @brief   Draw a character on the screen
 		 * @param character - char - character to draw
