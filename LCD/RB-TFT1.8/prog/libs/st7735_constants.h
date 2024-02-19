@@ -83,6 +83,7 @@
   #define ST7735_BLUE           0xF000
   #define ST7735_GREEN          0x0F00
   #define ST7735_RED            0x00F0
+  #define ST7735_DONT_KNOW      0x000F
 
   // AREA definition
   // -----------------------------------
@@ -91,19 +92,6 @@
   #define SIZE_X                MAX_X - 1         // columns max counter
   #define SIZE_Y                MAX_Y - 1         // rows max counter
   #define CACHE_SIZE_MEM        (MAX_X * MAX_Y)   // whole pixels
-  #define CHARS_COLS_LEN        5                 // number of columns for chars
-  #define CHARS_ROWS_LEN        8                 // number of rows for chars
 
-
-  /** @enum Font sizes */
-  enum Size {
-    // 1x 
-    NORMAL = 1,
-    // 2x 
-    LARGE = 2,
-    // 4x 
-    HUGE = 4
-	
-  };
 
 #endif

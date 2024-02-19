@@ -21,6 +21,7 @@
 
 #include "mbed.h"
 #include "st7735_constants.h"
+#include "LCD_graphics.h"
 
 /**
  * @class ST7735
@@ -28,7 +29,7 @@
  * @details ST7735 is a 262K Color Single-Chip TFT Controller/Driver
  */
 
-class ST7735 {
+class ST7735 : public LCD_graphics {
     private:
         /// SPI interface 
         SPI 			*__spi;
@@ -42,10 +43,6 @@ class ST7735 {
 		/// Width and Height of the screen
 		uint16_t		__width;
 		uint16_t		__height;
-
-        /// Text position
-        uint16_t        __text_x;
-        uint16_t        __text_y;
 		
 		/// Background color
 		uint16_t		__bg_color;
@@ -140,14 +137,6 @@ class ST7735 {
 		 */
 		bool 	set_window(uint16_t x0, uint16_t x1, uint16_t y0, uint16_t y1);
 
-        /**
-        * @brief   Set text position x, y
-        * @param x - uint16_t - position on X axis
-        * @param y - uint16_t - position on Y axis
-        * @return  false if x and y are out of range
-        */
-        bool    set_position (uint16_t x, uint16_t y);
-
 		/**
 		 * @brief   Set the color of the pixel
 		 * @param color - uint16_t - Color in 16 bits mode
@@ -163,37 +152,6 @@ class ST7735 {
          * @return  false if x and y are out of range
 		 */
 		bool	draw_pixel (uint16_t x, uint16_t y, uint16_t color);
-
-		/**
-		 * @brief    Draw a line using Bresenham's Algorithm
-		 * @param x0 - uint16_t - x0 position of the first point of the line
-		 * @param y0 - uint16_t - y0 position of the first point of the line
-		 * @param x1 - uint16_t - x1 position of the first point of the line
-		 * @param y1 - uint16_t - y1 position of the first point of the line
-		 * @param color - uint16_t - Color in 16 bits mode
-         * @return  false if x0,y0 and x1,y1 are out of range
-		 */		
-		bool 	draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
-			   
-		/**
-		 * @brief   Draw a character on the screen
-		 * @param character - char - character to draw
-		 * @param color - uint16_t - Color of the character
-		 * @param size - enum Size - (NORMAL, LARGE, HUGE)
-		 * @return false if character is not in the possible table of characters
-		 */
-		bool 	draw_char(char character, uint16_t color, enum Size size);
-			
-		/**
-		 * @brief    Draw a string of characters
-		 * @param str - char * - String to display
-		 * @param color - uint16_t - Color of the string
-		 * @param size - enum Size - (NORMAL, LARGE, HUGE)
-		 *
-		 * @return  false if the string of characters is too large for the screen
-		 */
-		bool 	draw_string(char *str, uint16_t color, enum Size size);
-		
 };
 
 #endif
