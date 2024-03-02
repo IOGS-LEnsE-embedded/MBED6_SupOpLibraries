@@ -87,86 +87,85 @@ bool 	LCD_graphics::draw_char(char character, uint16_t color, enum Size size)
 	// last row of character array - 8 rows / bits
 	idxRow = CHARS_ROWS_LEN;
 
-	// ------------------------
-	// SIZE X1 - normal font 1x
-	// ------------------------
-	if (size == NORMAL) {  
-		// loop through 5 bits
-		while (idxCol--) {
-			// read from ROM memory 
-			letter = FONTS[character - 0x20][idxCol];
-			// loop through 8 bits
-			while (idxRow--) {
-				// check if bit set
-				if (letter & (1 << idxRow)) {
-					// draw pixel 
-					this->draw_pixel(this->__text_x + idxCol, this->__text_y + idxRow, color);
-				}
-			}
-			// fill index row again
-			idxRow = CHARS_ROWS_LEN;
-		}
-		// update x position
-		this->__text_x += CHARS_COLS_LEN + 1;
-	/*
-	// --------------------------------------
-	// SIZE X2 - font 2x higher, normal wide
-	// --------------------------------------
-	} else if (size == X2) {
-	// loop through 5 bytes
-	while (idxCol--) {
-	// read from ROM memory 
-	letter = pgm_read_byte (&FONTS[character - 32][idxCol]);
-	// loop through 8 bits
-	while (idxRow--) {
-	// check if bit set
-	if (letter & (1 << idxRow)) {
-	// draw first left up pixel; 
-	// (idxRow << 1) - 2x multiplied 
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + idxCol, cacheMemIndexRow + (idxRow << 1), color);
-	// draw second left down pixel
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + idxCol, cacheMemIndexRow + (idxRow << 1) + 1, color);
-	}
-	}
-	// fill index row again
-	idxRow = CHARS_ROWS_LEN;
-	}
-	// update x position
-	cacheMemIndexCol = cacheMemIndexCol + CHARS_COLS_LEN + 1;
+    switch(size){
+	    case HUGE:
+        // ------------------
+        // SIZE X4 - font 4x
+        // ------------------
+	    // loop through 5 bytes
+            while (idxCol--) {
+                // read from ROM memory 
+                letter = FONTS[character - 0x20][idxCol];
+                // loop through 8 bits
+                while (idxRow--) {
+                    // check if bit set
+                    if (letter & (1 << idxRow)) {
+                        for(int k = 0; k < 4; k++){
+                            // draw pixels 
+                            this->draw_pixel(this->__text_x + 4*idxCol + k, this->__text_y + 4*idxRow, color);
+                            this->draw_pixel(this->__text_x + 4*idxCol + k, this->__text_y + 4*idxRow + 1, color);
+                            this->draw_pixel(this->__text_x + 4*idxCol + k, this->__text_y + 4*idxRow + 2, color);
+                            this->draw_pixel(this->__text_x + 4*idxCol + k, this->__text_y + 4*idxRow + 3, color);
+                        }
+                    }
+                }
+                // fill index row again
+                idxRow = CHARS_ROWS_LEN;
+            }
+	        // update x position
+	        this->__text_x += 4*(CHARS_COLS_LEN + 1);
+            break;
+	    case LARGE:
+        // ------------------
+        // SIZE X2 - font 2x
+        // ------------------
+	    // loop through 5 bytes
+            while (idxCol--) {
+                // read from ROM memory 
+                letter = FONTS[character - 0x20][idxCol];
+                // loop through 8 bits
+                while (idxRow--) {
+                    // check if bit set
+                    if (letter & (1 << idxRow)) {
+                        // draw pixel 
+                        this->draw_pixel(this->__text_x + 2*idxCol, this->__text_y + 2*idxRow, color);
+                        this->draw_pixel(this->__text_x + 2*idxCol + 1, this->__text_y + 2*idxRow, color);
+                        this->draw_pixel(this->__text_x + 2*idxCol, this->__text_y + 2*idxRow + 1, color);
+                        this->draw_pixel(this->__text_x + 2*idxCol + 1, this->__text_y + 2*idxRow + 1, color);
+                    }
+                }
+                // fill index row again
+                idxRow = CHARS_ROWS_LEN;
+            }
+	        // update x position
+	        this->__text_x += 2*(CHARS_COLS_LEN + 1);
+            break;
 
-	// --------------------------------------
-	// SIZE X3 - font 2x higher, 2x wider
-	// --------------------------------------
-	} else if (size == X3) {
-	// loop through 5 bytes
-	while (idxCol--) {
-	// read from ROM memory 
-	letter = pgm_read_byte (&FONTS[character - 32][idxCol]);
-	// loop through 8 bits
-	while (idxRow--) {
-	// check if bit set
-	if (letter & (1 << idxRow)) {
-	// draw first left up pixel; 
-	// (idxRow << 1) - 2x multiplied 
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + (idxCol << 1), cacheMemIndexRow + (idxRow << 1), color);
-	// draw second left down pixel
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + (idxCol << 1), cacheMemIndexRow + (idxRow << 1) + 1, color);
-	// draw third right up pixel
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + (idxCol << 1) + 1, cacheMemIndexRow + (idxRow << 1), color);
-	// draw fourth right down pixel
-	ST7735_DrawPixel (lcd, cacheMemIndexCol + (idxCol << 1) + 1, cacheMemIndexRow + (idxRow << 1) + 1, color);
-	}
-	}
-
-	// fill index row again
-	idxRow = CHARS_ROWS_LEN;
-	}
-	// update x position
-	cacheMemIndexCol = cacheMemIndexCol + CHARS_COLS_LEN + CHARS_COLS_LEN + 1;
+        case NORMAL:  
+        default:
+        // ------------------------
+        // SIZE X1 - normal font 1x
+        // ------------------------
+            // loop through 5 bits
+            while (idxCol--) {
+                // read from ROM memory 
+                letter = FONTS[character - 0x20][idxCol];
+                // loop through 8 bits
+                while (idxRow--) {
+                    // check if bit set
+                    if (letter & (1 << idxRow)) {
+                        // draw pixel 
+                        this->draw_pixel(this->__text_x + idxCol, this->__text_y + idxRow, color);
+                    }
+                }
+                // fill index row again
+                idxRow = CHARS_ROWS_LEN;
+            }
+            // update x position
+            this->__text_x += (CHARS_COLS_LEN + 1);
+            break;
+    }
 	
-		*/
-	}
-
 	// return exit
 	return LCD_SUCCESS;
 }
@@ -186,7 +185,7 @@ bool 	LCD_graphics::draw_string(char *str, uint16_t color, enum Size size)
 	// Check if string size is in the range of the screen
 	max_x_pos = this->__text_x + ((CHARS_COLS_LEN+1) * size);
 	max_y_pos = this->__text_y + (CHARS_ROWS_LEN * size);
-	// check if coordinates is out of range
+	// check if coordinates is out of range - NOT WORKING WITH SIZE !
     if (!this->check_range(max_x_pos, max_y_pos)) { return  LCD_ERROR; }
 
 	// loop through character of string
