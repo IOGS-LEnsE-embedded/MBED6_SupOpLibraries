@@ -1,0 +1,37 @@
+DEVELOPMENT OF A LCD GRAPHICS CORE LIBRARY
+==========================================
+Graphics core library for LCD display.
+
+Developped by Villou / LEnsE / Institut d'Optique Graduate School
+http://lense.institutoptique.fr/
+
+
+**********************************************************************
+Requirements 
+------------
+- font.h / font.cpp	Font library - ASCII characters
+- LCD_graphics.h / LCD_graphics.cpp
+		Graphics Core Library
+- Driver for your LCD display
+
+**********************************************************************
+LCD driver library must implement 
+---------------------------------
+	- a **draw_pixel** method with parameters : 
+      		-> uint16_t x, uint16_t y, uint16_t color, 
+	      	-> returns false if x and y are out of the range of the screen
+	- a **check_range** method with parameters : 
+		-> uint16_t x, uint16_t y
+		-> returns false if x and y are out of the range of the screen
+
+**********************************************************************
+How to use
+----------
+
+
+**********************************************************************
+Last Updates
+------------
+
+2024-02-19 / J. VILLEMEJANE
+	Adding fill_rect and draw_rect methods to draw rectangle
